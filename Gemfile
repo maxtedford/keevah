@@ -24,6 +24,7 @@ gem "rails_12factor", group: :production
 gem "pry"
 gem "capybara"
 gem "poltergeist"
+gem "newrelic_rpm"
 
 group :development, :test do
   gem "awesome_print"
