@@ -22,12 +22,12 @@ gem "responders"
 gem "traceroute"
 gem "rails_12factor", group: :production
 gem "pry"
+gem "capybara"
 
 group :development, :test do
   gem "awesome_print"
   gem "web-console", "~> 2.0"
   gem "rspec-rails"
-  gem "capybara"
   gem "launchy"
   gem "database_cleaner"
   gem "poltergeist"
