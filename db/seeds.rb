@@ -47,7 +47,7 @@ class Seed
   end
 
   def create_categories
-    ["raspberry", "honeydew", "tomato", "apple", "banana", "peach", "orange", "plum", "mango", "grape", "tangerine", "lemon", "coconut", "strawberry", "blueberry"].each do |cat| )
+    ["raspberry", "honeydew", "tomato", "apple", "banana", "peach", "orange", "plum", "mango", "grape", "tangerine", "lemon", "coconut", "strawberry", "blueberry"].each do |cat|
       Category.create(title: cat, description: cat + " stuff")
     end
     put_requests_in_categories
