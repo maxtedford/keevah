@@ -5,7 +5,7 @@ class Seed
     create_known_users
     create_borrowers(31000)
     create_lenders(201000)
-    create_loan_requests_for_each_borrower(17)
+    create_loan_requests_for_each_borrower(500000)
     create_categories
     create_orders
   end
@@ -68,10 +68,8 @@ class Seed
       lr.description = Faker::Company.catch_phrase
       lr.amount = 200
       lr.status = [0, 1].sample
-      lr.request_by =
-        Faker::Time.between(7.days.ago, 3.days.ago)
-      lr.repayment_begin_date =
-        Faker::Time.between(3.days.ago, Time.now)
+      lr.requested_by_date = Faker::Time.between(7.days.ago, 3.days.ago)
+      lr.repayment_begin_date = Faker::Time.between(3.days.ago, Time.now)
       lr.repayment_rate = 0
       lr.contributed = 0
       lr.repayed = 0
