@@ -1,9 +1,11 @@
+require "populator"
+
 class Seed
   def run
     create_known_users
-    create_borrowers(30000)
-    create_lenders(200000)
-    create_loan_requests_for_each_borrower(16)
+    create_borrowers(31000)
+    create_lenders(201000)
+    create_loan_requests_for_each_borrower(17)
     create_categories
     create_orders
   end
@@ -27,71 +29,58 @@ class Seed
   end
 
   def create_lenders(quantity)
-    quantity.times do
-      name = Faker::Name.name
-      email = Faker::Internet.email
-      user = User.create(name: name,
-                         password: "password",
-                         email: email,
-                         role: 0)
-      puts "created lender #{user.name}"
+    User.populate(quantity) do |user|
+      user.name = Faker::Name.name
+      user.email = Faker::Internet.email
+      user.password_digest = "$2a$10$G3BpQrzzJAvyFlAqHUDAu.UlHwMGiswSsLRnhAS2DOmIhc7l1.ihK"
+      user.role = 0
     end
   end
 
   def create_borrowers(quantity)
-    quantity.times do
-      name = Faker::Name.name
-      email = Faker::Internet.email
-      user = User.create(name: name,
-                         password: "password",
-                         email: email,
-                         role: 1)
-      puts "created borrower #{user.name}"
+    User.populate(quantity) do |user|
+      user.name = Faker::Name.name
+      user.email = Faker::Internet.email
+      user.password_digest = "$2a$10$G3BpQrzzJAvyFlAqHUDAu.UlHwMGiswSsLRnhAS2DOmIhc7l1.ihK"
+      user.role = 1
     end
   end
 
   def create_categories
-    ["raspberry", "honeydew", "tomato", "apple", "banana", "peach", "orange", "plum", "mango", "grape", "tangerine", "lemon", "coconut", "strawberry", "blueberry"].each do |cat|
+    ["raspberry", "honeydew", "tomato", "apple", "banana", "peach", "orange", "plum", "mango", "grape", "tangerine", "lemon", "coconut", "strawberry", "blueberry"].each do |cat| )
       Category.create(title: cat, description: cat + " stuff")
     end
     put_requests_in_categories
   end
 
   def put_requests_in_categories
-    LoanRequest.all.shuffle.each do |request|
-      Category.all.shuffle.first.loan_requests << request
-      puts "linked request and category"
+    categories = Category.all
+    LoanRequest.all.each do |request|
+      categories.sample.loan_requests << request
     end
   end
 
   def create_loan_requests_for_each_borrower(quantity)
-    quantity.times do
-      borrowers.each do |borrower|
-        title = Faker::Commerce.product_name
-        description = Faker::Company.catch_phrase
-        status = [0, 1].sample
-        request_by =
-          Faker::Time.between(7.days.ago, 3.days.ago)
-        repayment_begin_date =
-          Faker::Time.between(3.days.ago, Time.now)
-        amount = "200"
-        contributed = "0"
-        request = borrower.loan_requests.create(title: title,
-                                                description: description,
-                                                amount: amount,
-                                                status: status,
-                                                requested_by_date: request_by,
-                                                contributed: contributed,
-                                                repayment_rate: "weekly",
-                                                repayment_begin_date: repayment_begin_date)
-        puts "created loan request #{request.title} for #{borrower.name}"
-        puts "There are now #{LoanRequest.count} requests"
-      end
+    brws = borrowers
+    
+    LoanRequest.populate(quantity) do |lr|
+      lr.title = Faker::Commerce.product_name
+      lr.description = Faker::Company.catch_phrase
+      lr.amount = 200
+      lr.status = [0, 1].sample
+      lr.request_by =
+        Faker::Time.between(7.days.ago, 3.days.ago)
+      lr.repayment_begin_date =
+        Faker::Time.between(3.days.ago, Time.now)
+      lr.repayment_rate = 0
+      lr.contributed = 0
+      lr.repayed = 0
+      lr.user_id = brws.sample.id
     end
   end
 
   def create_orders
-    loan_requests = LoanRequest.all
+    loan_requests = LoanRequest.all.sample(50000)
     possible_donations = %w(25, 50, 75, 100, 125, 150, 175, 200)
     loan_requests.each do |request|
       donate = possible_donations.sample
