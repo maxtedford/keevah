@@ -50,6 +50,7 @@ module LoadScript
     end
 
     def log_in(email="demo+horace@jumpstartlab.com", pw="password")
+      puts "logging in"
       log_out
       session.visit host
       session.click_link("Log In")
@@ -59,11 +60,13 @@ module LoadScript
     end
 
     def browse_loan_requests
+      puts "browsing loan request"
       session.visit "#{host}/browse"
       session.all(".lr-about").sample.click
     end
 
     def log_out
+      puts "logging out"
       session.visit host
       if session.has_content?("Log out")
         session.find("#logout").click
@@ -79,6 +82,7 @@ module LoadScript
     end
 
     def sign_up_as_lender(name = new_user_name)
+      puts "signing up as lender"
       log_out
       session.find("#sign-up-dropdown").click
       session.find("#sign-up-as-lender").click
@@ -92,7 +96,7 @@ module LoadScript
     end
 
     def categories
-      ["Agriculture", "Education", "Community"]
+      ["raspberry", "honeydew", "tomato", "apple", "banana", "peach", "orange", "plum", "mango", "grape", "tangerine", "lemon", "coconut", "strawberry", "blueberry"]
     end
   end
 end
