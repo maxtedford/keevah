@@ -46,12 +46,6 @@ class Seed
       user.role = 1
     end
   end
-
-  def create_categories
-    ["raspberry", "honeydew", "tomato", "apple", "banana", "peach", "orange", "plum", "mango", "grape", "tangerine", "lemon", "coconut", "strawberry", "blueberry"].each do |cat|
-      Category.create(title: cat, description: cat + " stuff")
-    end
-  end
   
   def create_loan_requests_for_each_borrower(quantity)
     brws = borrowers
@@ -69,14 +63,17 @@ class Seed
       lr.user_id = brws.sample.id
     end
   end
-  
-  def attach_loan_requests_to_categories(quantity)
-    categories = Category.all
-    loan_requests = LoanRequest.all
-    
-    LoanRequestsCategories.populate(quantity) do |lrc|
-      lrc.category_id = categories.sample.id
-      lrc.loan_request_id = loan_requests.sample.id
+
+  def create_categories
+    ["raspberry", "honeydew", "tomato", "apple", "banana", "peach", "orange", "plum", "mango", "grape", "tangerine", "lemon", "coconut", "strawberry", "blueberry"].each do |cat|
+      Category.create(title: cat, description: cat + " stuff")
+    end
+    put_requests_in_categories
+  end
+
+  def put_requests_in_categories
+    LoanRequest.all.each do |request|
+      Category.all.sample.loan_requests << request
     end
   end
 
