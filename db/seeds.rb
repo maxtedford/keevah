@@ -67,8 +67,7 @@ class Seed
       lr.contributed = 0
       lr.repayed = 0
       lr.user_id = brws.sample.id
-      
-      categories.sample.loan_requests << loan_request
+      lr.categories << categories.sample
     end
   end
 
