@@ -46,7 +46,7 @@ module LoadScript
     end
 
     def actions
-      [:browse_loan_requests, :sign_up_as_lender]
+      [:browse_loan_requests, :sign_up_as_lender, :browse_categories]
     end
 
     def log_in(email="demo+horace@jumpstartlab.com", pw="password")
@@ -64,7 +64,14 @@ module LoadScript
       session.visit "#{host}/browse"
       session.all(".lr-about").sample.click
     end
-
+    
+    # def browse_categories
+    #   puts "browsing categories"
+    #   session.visit "#{host}/browse"
+    #   categories = Category.all
+    #   session.find("#categories-dropdown").find("#{categories.sample.title}").select_option
+    # end
+    
     def log_out
       puts "logging out"
       session.visit host
