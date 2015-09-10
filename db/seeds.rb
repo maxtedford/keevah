@@ -7,7 +7,6 @@ class Seed
     create_lenders(201000)
     create_loan_requests_for_each_borrower(500000)
     create_categories
-    attach_loan_requests_to_categories(500000)
     create_orders
   end
 
