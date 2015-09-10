@@ -50,18 +50,11 @@ class Seed
     ["raspberry", "honeydew", "tomato", "apple", "banana", "peach", "orange", "plum", "mango", "grape", "tangerine", "lemon", "coconut", "strawberry", "blueberry"].each do |cat|
       Category.create(title: cat, description: cat + " stuff")
     end
-    put_requests_in_categories
   end
-
-  def put_requests_in_categories
-    categories = Category.all
-    LoanRequest.all.each do |request|
-      categories.sample.loan_requests << request
-    end
-  end
-
+  
   def create_loan_requests_for_each_borrower(quantity)
     brws = borrowers
+    categories = Category.all
     
     LoanRequest.populate(quantity) do |lr|
       lr.title = Faker::Commerce.product_name
@@ -74,6 +67,8 @@ class Seed
       lr.contributed = 0
       lr.repayed = 0
       lr.user_id = brws.sample.id
+      
+      categories.sample.loan_requests << loan_request
     end
   end
 
