@@ -74,6 +74,7 @@ class Seed
   def put_requests_in_categories
     LoanRequest.all.each do |request|
       Category.all.sample.loan_requests << request
+      puts "linked request and category"
     end
   end
 
