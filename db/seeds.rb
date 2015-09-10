@@ -3,29 +3,40 @@ require "populator"
 class Seed
   def run
     create_known_users
+    create_categories
     create_borrowers(31000)
     create_lenders(201000)
-    create_loan_requests_for_each_borrower(500000)
-    create_categories
-    create_orders
+    create_loan_requests_for_each_borrower(501000)
+    create_orders(51000)
   end
 
   def lenders
-    User.where(role: 0)
+    @lenders ||= User.where(role: 0)
   end
 
   def borrowers
-    User.where(role: 1)
+    @borrowers ||= User.where(role: 1)
   end
 
   def orders
-    Order.all
+    @orders ||= Order.all
+  end
+  
+  def loan_request_ids
+    @loan_request_ids ||= LoanRequest.pluck(:id)
   end
 
   def create_known_users
     User.create(name: "Jorge", email: "jorge@example.com", password: "password")
     User.create(name: "Rachel", email: "rachel@example.com", password: "password")
     User.create(name: "Josh", email: "josh@example.com", password: "password", role: 1)
+  end
+
+  def create_categories
+    ["raspberry", "honeydew", "tomato", "apple", "banana", "peach", "orange", "plum", "mango", "grape", "tangerine", "lemon", "coconut", "strawberry", "blueberry"].each do |cat|
+      Category.create(title: cat, description: cat + " stuff")
+      puts "Created category #{cat}"
+    end
   end
 
   def create_lenders(quantity)
@@ -48,6 +59,7 @@ class Seed
   
   def create_loan_requests_for_each_borrower(quantity)
     brws = borrowers
+    categories = Category.all
     
     LoanRequest.populate(quantity) do |lr|
       lr.title = Faker::Commerce.product_name
@@ -56,38 +68,27 @@ class Seed
       lr.status = [0, 1].sample
       lr.requested_by_date = Faker::Time.between(7.days.ago, 3.days.ago)
       lr.repayment_begin_date = Faker::Time.between(3.days.ago, Time.now)
-      lr.repayment_rate = 0
+      lr.repayment_rate = [0, 1].sample
       lr.contributed = 0
       lr.repayed = 0
       lr.user_id = brws.sample.id
+      LoanRequestsCategory.populate(4) do |request_cat|
+        request_cat.loan_request_id = lr.id
+        request_cat.category_id = categories.sample.id
+      end
     end
   end
 
-  def create_categories
-    ["raspberry", "honeydew", "tomato", "apple", "banana", "peach", "orange", "plum", "mango", "grape", "tangerine", "lemon", "coconut", "strawberry", "blueberry"].each do |cat|
-      Category.create(title: cat, description: cat + " stuff")
-    end
-    put_requests_in_categories
-  end
-
-  def put_requests_in_categories
-    LoanRequest.all.each do |request|
-      Category.all.sample.loan_requests << request
-      puts "linked request and category"
-    end
-  end
-
-  def create_orders
-    loan_requests = LoanRequest.all
+  def create_orders(n)
     possible_donations = %w(25, 50, 75, 100, 125, 150, 175, 200)
-    possible_lenders = (0..200000).to_a
-    loan_requests.each do |request|
-      donate = possible_donations.sample
-      lender = User.find(possible_lenders.sample)
-      order = Order.create(cart_items: { "#{request.id}" => donate },
+    n.times do
+      donation = possible_donations.sample
+      lender = lenders.sample
+      request_id = loan_request_ids.sample
+      order = Order.create(cart_items: { "#{request_id}" => donation },
                            user_id: lender.id)
       order.update_contributed(lender)
-      puts "Created Order for Request #{request.title} by Lender #{lender.name}"
+      puts "Created order ##{order.id}"
     end
   end
 end
