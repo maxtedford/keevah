@@ -7,6 +7,7 @@ class Seed
     create_lenders(201000)
     create_loan_requests_for_each_borrower(500000)
     create_categories
+    attach_loan_requests_to_categories(500000)
     create_orders
   end
 
@@ -54,7 +55,6 @@ class Seed
   
   def create_loan_requests_for_each_borrower(quantity)
     brws = borrowers
-    categories = Category.all
     
     LoanRequest.populate(quantity) do |lr|
       lr.title = Faker::Commerce.product_name
@@ -67,7 +67,16 @@ class Seed
       lr.contributed = 0
       lr.repayed = 0
       lr.user_id = brws.sample.id
-      lr.categories << categories.sample
+    end
+  end
+  
+  def attach_loan_requests_to_categories(quantity)
+    categories = Category.all
+    loan_requests = LoanRequest.all
+    
+    LoanRequestsCategories.populate(quantity) do |lrc|
+      lrc.category_id = categories.sample.id
+      lrc.loan_request_id = loan_requests.sample.id
     end
   end
 
