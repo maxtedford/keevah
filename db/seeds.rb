@@ -7,7 +7,7 @@ class Seed
     create_borrowers(31000)
     create_lenders(201000)
     create_loan_requests_for_each_borrower(501000)
-    create_orders(51000)
+    create_orders(53000)
   end
 
   def lenders
