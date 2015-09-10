@@ -78,17 +78,14 @@ class Seed
   end
 
   def create_orders
-    loan_requests = LoanRequest.all.sample(50000)
-    lenders = User.where(role: 0)
+    loan_requests = LoanRequest.all
     possible_donations = %w(25, 50, 75, 100, 125, 150, 175, 200)
-    
-    50000.times do
-      lender = lenders.sample
+    possible_lenders = (0..200000).to_a
+    loan_requests.each do |request|
       donate = possible_donations.sample
-      request = loan_requests.sample
-      order = Order.create(cart_items:
-          { "#{request.id}" => donate },
-        user_id: lender.id)
+      lender = User.find(possible_lenders.sample)
+      order = Order.create(cart_items: { "#{request.id}" => donate },
+                           user_id: lender.id)
       order.update_contributed(lender)
       puts "Created Order for Request #{request.title} by Lender #{lender.name}"
     end
