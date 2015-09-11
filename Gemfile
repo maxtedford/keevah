@@ -26,6 +26,7 @@ gem "capybara"
 gem "poltergeist"
 gem "newrelic_rpm"
 gem "populator"
+gem "will_paginate", "~> 3.0.6"
 
 group :development, :test do
   gem "awesome_print"
