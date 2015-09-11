@@ -27,6 +27,8 @@ Rails.application.routes.draw do
   resources :borrowers
 
   resources :users, only: [:show]
+  
+  resources :categories, only: [:show]
 
   get "*path", to: "home#not_found"
 end

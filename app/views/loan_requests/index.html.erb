@@ -5,12 +5,11 @@
 <div class="container">
   <div class="row">
     <div class="col-md-3 pull-left">
-      <select id="categories-dropdown" class="form-control btn-info">
-        <option value="farming">Farming</option>
-        <option value="education">Education</option>
-        <option value="medical">Medical</option>
-        <option value="repair">Women</option>
-      </select>
+      
+      <% @categories.each do |category| %>
+        <%= link_to category.title, category %>
+      <% end %>
+      
     </div>
 
     <%= render "shared/search" %>
