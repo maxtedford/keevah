@@ -57,30 +57,30 @@ module LoadScript
     end
 
     def browse_pages_of_loan_requests
-      log_in
       puts "browsing loan request pages"
+      log_in
       session.visit "#{host}/browse"
       session.all(".pagination a").sample.click
     end
 
     def browse_categories
-      log_in
       puts "browsing categories"
+      log_in
       session.visit "#{host}/browse"
       session.all(".pull-left a").sample.click
     end
     
     def browse_pages_of_categories
-      log_in
       puts "browsing pages of categories"
-      sessions.visit "#{host}/browse"
+      log_in
+      session.visit "#{host}/browse"
       session.all(".pull-left a").sample.click
       session.all(".pagination a").sample.click
     end
     
     def view_individual_loan_request
-      log_in
       puts "viewing individual loan request"
+      log_in
       session.visit "#{host}/browse"
       session.all("a.lr-about").sample.click
     end
@@ -115,13 +115,14 @@ module LoadScript
     end
     
     def borrower_creates_loan_request
+      puts "borrower creates loan request"
       sign_up_as_borrower
-      session.click_on("Create Loan Request")
+      session.click_link_or_button("Create Loan Request")
       session.within("#loanRequestModal") do
         session.fill_in("loan_request_title", with: new_request_title)
         session.fill_in("loan_request_description", with: new_request_description)
         session.fill_in("loan_request_requested_by_date", with: new_request_by_date)
-        session.fill_in("loan_request_repayment_date", with: new_repayment_date)
+        session.fill_in("loan_request_repayment_begin_date", with: new_repayment_date)
         session.select("Education", from: "loan_request_category")
         session.fill_in("loan_request_amount", with: "500")
         session.click_link_or_button("Submit")
@@ -129,25 +130,24 @@ module LoadScript
     end
     
     def lender_makes_loan
+      puts "lender making loan"
       sign_up_as_lender
       view_individual_loan_request
-      session.click_on("Contribute $25")
-      session.click_on("Basket")
-      session.click_on("Transfer Funds")
+      session.click_link_or_button("Contribute $25")
+      session.click_link_or_button("Basket")
+      session.click_link_or_button("Transfer Funds")
     end
     
     def log_in(email="demo+horace@jumpstartlab.com", pw="password")
-      puts "logging in"
       log_out
       session.visit host
-      session.click_link("Log In")
-      session.fill_in("email_address", with: email)
-      session.fill_in("password", with: pw)
       session.click_link_or_button("Login")
+      session.fill_in("session[email]", with: email)
+      session.fill_in("session[password]", with: pw)
+      session.click_link_or_button("Log In")
     end
     
     def log_out
-      puts "logging out"
       session.visit host
       if session.has_content?("Log out")
         session.find("#logout").click
