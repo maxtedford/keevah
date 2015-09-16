@@ -4,7 +4,6 @@ class OrdersController < ApplicationController
       order = Order.new(cart_items: params[:cart], user_id: current_user.id)
       if order.save
         order.update_contributed(current_user)
-        order.send_contributed_to_email
         flash[:notice] = "Thank you for your contribution, #{current_user.name}!"
         session[:cart] = {}
         redirect_to lender_path(current_user)
