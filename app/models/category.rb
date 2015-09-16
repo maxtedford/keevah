@@ -5,7 +5,7 @@ class Category < ActiveRecord::Base
   has_many :loan_requests, through: :loan_requests_categories
   
   def self.all_cats
-    Rails.cache.fetch("all_categories-#{Category.last.id}") do
+    Rails.cache.fetch("all-cats-#{Category.last.id}") do
       self.all
     end
   end
